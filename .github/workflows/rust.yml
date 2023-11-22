@@ -20,7 +20,7 @@ jobs:
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
             name: czkawka_cli-linux-arm64 
-        toolchain: [ 1.70.0 ]
+        toolchain: [ stable ]
         type: [ release ]
     runs-on: ${{ matrix.os }}
     steps:
@@ -32,10 +32,11 @@ jobs:
       - name: Install basic libraries
         run: sudo apt-get update; sudo apt install libheif-dev ffmpeg -y
 
-      - name: Setup rust version
-        run: |
-          rustup default ${{ matrix.toolchain }}
-          rustup target add ${{ matrix.target }}
+      - name: Setup | Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
 
       - name: Build Release
         run:  |
