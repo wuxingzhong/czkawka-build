@@ -37,6 +37,10 @@ jobs:
         with:
           toolchain: stable
           target: ${{ matrix.target }}
+          
+      - name: Setup | Install cross [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        uses: taiki-e/install-action@cross
 
       - name: Build Release
         run:  |
