@@ -13,9 +13,16 @@ jobs:
   linux-cli:
     strategy:
       matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            name: czkawka_cli-linux-amd64
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            name: czkawka_cli-linux-arm64 
         toolchain: [ 1.70.0 ]
         type: [ release ]
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Pull czkawka
@@ -31,7 +38,7 @@ jobs:
       - name: Build Release
         run:  |
           cd czkawka 
-          cargo build --release --bin czkawka_cli
+          cargo build --release --bin czkawka_cli --target ${{ matrix.target }}
         env:
           CARGO_INCREMENTAL: 0
           RUSTFLAGS: "-C debuginfo=0"
@@ -40,6 +47,6 @@ jobs:
       - name: Store Linux CLI
         uses: actions/upload-artifact@v3
         with:
-          name: czkawka_cli-${{ runner.os }}-${{ matrix.toolchain }}
+          name: ${{ matrix.name }}
           path: czkawka/target/release/czkawka_cli
         if: ${{ matrix.type == 'release' }}
