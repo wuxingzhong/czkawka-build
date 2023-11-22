@@ -17,9 +17,9 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             name: czkawka_cli-linux-amd64
-          - target: aarch64-unknown-linux-gnu
+          - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
-            name: czkawka_cli-linux-arm64 
+            name: czkawka_cli-linux-arm64
         toolchain: [ stable ]
         type: [ release ]
     runs-on: ${{ matrix.os }}
