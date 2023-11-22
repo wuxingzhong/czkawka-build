@@ -1,4 +1,4 @@
-name: Rust
+name: 🐧 Linux CLI
 
 on:
   push:
@@ -10,13 +10,36 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  linux-cli:
+    strategy:
+      matrix:
+        toolchain: [ stable, 1.70.0 ]
+        type: [ release ]
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v3
+      - name: Pull czkawka
+        run: |
+            git clone  -b json_ouput https://github.com/wuxingzhong/czkawka.git
+
+      - name: Install basic libraries
+        run: sudo apt-get update; sudo apt install libheif-dev ffmpeg -y
+
+      - name: Setup rust version
+        run: rustup default ${{ matrix.toolchain }}
+
+      - name: Build Release
+        run:  |
+          cd czkawka 
+          cargo build --release --bin czkawka_cli
+        env:
+          CARGO_INCREMENTAL: 0
+          RUSTFLAGS: "-C debuginfo=0"
+        if: ${{ (matrix.type == 'release') }}
+
+      - name: Store Linux CLI
+        uses: actions/upload-artifact@v3
+        with:
+          name: czkawka_cli-${{ runner.os }}-${{ matrix.toolchain }}
+          path: target/release/czkawka_cli
+        if: ${{ matrix.type == 'release' }}
