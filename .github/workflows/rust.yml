@@ -33,7 +33,9 @@ jobs:
         run: sudo apt-get update; sudo apt install libheif-dev ffmpeg -y
 
       - name: Setup rust version
-        run: rustup default ${{ matrix.toolchain }}
+        run: |
+          rustup default ${{ matrix.toolchain }}
+          rustup target add ${{ matrix.target }}
 
       - name: Build Release
         run:  |
